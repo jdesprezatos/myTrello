@@ -1,6 +1,10 @@
 <template>
-    <div ref="mainBox" id="mainBox"  >
-        <div id="title-div">{{title}}</div>
+    <div ref="mainBox" id="mainBox"
+        draggable=true
+        @dragstart="onDragstart"
+        @dragend="onDragEnd"
+        >
+        <div id="title-div"> <span draggable="false" @drag.stop @dragstart.stop @dragend.stop>{{title}}</span></div>
         <!-- <div id="tag-div">
             <span class="span-tag" v-for="t in cardTags" :key="t">{{ t }} <button id="remove-tag-button"></button></span>
         </div> -->
@@ -8,7 +12,7 @@
             <TagView v-for="tag in tags" :key="tag.name" :name="tag.name" :bgColor="tag.color"></TagView>
             <!-- <TagView v-for="(name, bgColor) in tagsTest" :key="name" :name="tag.name" :bgColor="bgColor"></TagView> -->
         </div>
-        <div id="small-desc-div">{{ smallDescription }}</div>
+        <div id="small-desc-div"><span>{{ smallDescription }}</span></div>
     </div>
 </template>
 
@@ -49,9 +53,31 @@ export default {
             // console.log('Main div : h = ' + domDiv.clientHeight + ' w = ' + mainDiv.clientWidth)
             // console.log('checkOverFlow ' + domDiv.scrollHeight + ' ' + domDiv.scrollWidth )
             return false;
+        },
+        onDragstart : function(event) {
+            let t = event.target;
+
+            // event.data .setData('cardId', target.id)
+            //event.dataTransfer.setData('cardId', 42)
+            event.dataTransfer.setData('cardId', this.cardId)
+            
+            setTimeout(() => {
+                //t.style.display = "none";
+                t.style.visibility = "hidden";
+            }, 0);
+
+        },
+        onDragEnd : function(event) {
+            event.target;
+            console.log('onDragEnd called');
+            
+            event.target.style.visibility = "visible";
+            // event.target.style.display = "block";
+
         }
     },
     props : {
+        cardId : Number,
         tags : Array,
         title : {
             Type: String,
@@ -69,15 +95,24 @@ export default {
 
 
 #mainBox {
-    border: 2px solid black;
+    /* border: 2px solid rgb(145, 200, 150); */
+    border: 1px solid transparent;
     border-radius: 6px;
-    max-width: 270px;
-    min-width: 150px;
+    max-width: 370px;
+    min-width: 120px;
 
-    background-color: #c5f7c8;
+    /* background-color: rgb(197, 247, 200); */
+    background-color: rgb(255, 255, 255);
+    box-shadow: 2px 2px 6px rgb(192, 192, 192);
 
-    padding: 6px;
+    padding: 3px;
     margin: 3px;
+
+    width: 100%;
+    
+    box-sizing: border-box;
+
+    /* cursor: grab; */
 
     /* display: block;
     margin-left: auto;
@@ -105,6 +140,8 @@ export default {
 
 #small-desc-div {
     font-size: 0.9em;
+    
+    pointer-events : none;
 }
 
 /*.span-tag {

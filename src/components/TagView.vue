@@ -70,10 +70,15 @@
 
     margin: 2px;
     padding: 3px;
-    border: solid 2px  #656565; 
+    border: solid 1px  #656565; 
     border-radius: 6px;
 
     background-color: #f9bd9f;
+
+    cursor: auto;
+    user-select: text;
+
+    pointer-events : none;
 }
 
 #remove-tag-button {
