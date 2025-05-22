@@ -1,5 +1,8 @@
 <template>
-    <span class="tag-span" :style="{'background-color':bgColor, color:textColor}">{{ shortName }}<button id="remove-tag-button" :style="{color:textColor}"></button></span>
+    <!-- <span class="tag-span" :style="{'background-color':bgColor, color:textColor}">{{ shortName }}<button id="remove-tag-button" :style="{color:textColor}"></button></span> -->
+    <div>
+        <span class="tag-span" :style="{'background-color':bgColor, color:textColor}">{{ shortName }}<button v-if="canRemove" id="remove-tag-button"></button></span>
+    </div>
 </template>
 
 <script>
@@ -42,7 +45,7 @@
                     }
                     colors.splice(minIdx, 1);
                     let moy = (colors[0] + colors[1]) / 2;
-                    if (moy < 180 )
+                    if (moy < 125 )
                     {
                         retTextColor = '#efefef'
                     }
@@ -53,15 +56,19 @@
         },
         props : {
             name : String,
+            canRemove : {
+                type : Boolean,
+                default : true
+            },
             bgColor : {
-                String,
+                type : String,
                 default : '#f9bd9f'
             }
         }
     }
 </script>
 
-<style>
+<style lang="scss">
 
 .tag-span {
     display: flex;
@@ -75,24 +82,25 @@
 
     background-color: #f9bd9f;
 
-    cursor: auto;
+    cursor: auto; 
     user-select: text;
 
-    pointer-events : none;
+    width: fit-content;
 }
 
 #remove-tag-button {
     background-color: transparent;
-    /* border: 1px #9e9e9e solid; */
+    border: 1px #9e9e9e solid;
     border: 0;
     margin: -2px;
+    cursor: pointer;
 }
 
 #remove-tag-button:after{
   display: inline-block;
   background-color: transparent;
-  content: "\00d7"; /* This will render the 'X' */
-  border: 1 solid #fefefe;
+  content: "\00d7";
+//   border: 1 solid #fefefe;
 }
 
 

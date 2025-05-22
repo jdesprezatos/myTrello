@@ -1,5 +1,13 @@
 <template>
     <div class="table-view-main-container">
+
+       <!-- <div>
+            <CreateCardPanel v-if="cardCreationMode.isActive"
+            @create-new-cart-event="onCreateCardEventHandler"
+            :boardId="cardCreationMode.boardId"
+            @cancel-create-card="onCancelCreateCard"></CreateCardPanel>
+        </div> -->
+
         <div class="table-view-table-container">
             <BoardItem v-for="board in boardsWithCards" :key="board.boardId" 
             :boardTitle="board.boardTitle"
@@ -8,7 +16,9 @@
             :doEditName="board.doEditName"
             @onCardDropped="onCardDroppedEventHandler"
             @delete-board-event="onDeleteBoardEventHandler"
-            @name-changed-event="onBoardNameChanged">
+            @name-changed-event="onBoardNameChanged"
+            @new-card-event="onNewCardEventHandler"
+            >
             </BoardItem>
 
             <div class="add-board-div">
@@ -16,11 +26,41 @@
                 <button @click="onAddBoard">+</button>
                 </div> -->
                 <div class="one-icon-button-div">
-                    <button @click="onAddBoard"><div><span class="board-add-plus">+</span></div></button>
+                    <button @click="onAddBoard"><div class="one-icon-button-border-div"><span class="board-plus"></span></div></button>
+                </div>
+<!-- 
+                <div class="one-icon-button-div">
+                    <button @click="onAddBoard"><div class="one-icon-button-border-div"><span class="board-plus-empty">+</span></div></button>
                 </div>
 
+                <div class="one-icon-button-div">
+                    <button @click="onAddBoard"><div class="one-icon-button-border-div"><span class="board-x-inner">&#xD7;</span></div></button>
+                </div>
+
+
+                <div class="one-icon-button-div">
+                    <button @click="onAddBoard">
+                        <div class="one-icon-button-border-div">
+                            <div class="board-plus-empty">+</div>
+                        </div>
+                    </button>
+                </div>
+
+
+                <div >
+                    <div class="one-icon-button-div">
+                        <button @click="onAddBoard">
+                            <div class="one-icon-button-border-div">
+                                    <i class="fa fa-plus" style="font-size: 18px;"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div> -->
+
+
+
                 <!-- <div class="one-icon-button-div-other">
-                    <button><span class="board-add-plus">+</span></button>
+                    <button><span class="board-plus">+</span></button>
                 </div> -->
             </div>
         </div>
@@ -29,12 +69,13 @@
 
 <script>
 
-import BoardItem from './Board.vue'
+import BoardItem from './BoardItem.vue'
+//import CreateCardPanel from './CreateCardPanel.vue'
 
     export default {
-        name:'TableView',
+        name:'BoardView',
         components : {
-            BoardItem
+            BoardItem,// CreateCardPanel
         },
         prop : {},
         data: function() {
@@ -42,7 +83,7 @@ import BoardItem from './Board.vue'
                 defaultBoard: 'Undefined',
                 categories : ['To Do', 'Doing', 'Done'],
                 ladtBoardId : 3,
-
+                lastCardId : 3,
                 boardsWithCards : [
                     {
                         boardId : 0,
@@ -114,6 +155,10 @@ import BoardItem from './Board.vue'
                 ],
                 
                 newBoardName : '<NEW_BOARD_NAME>',
+                cardCreationMode : {
+                    isActive : false,
+                    boardId : -1
+                }
             }
         },
         computed: {},
@@ -206,7 +251,56 @@ import BoardItem from './Board.vue'
                         this.boardsWithCards[i].doEditName = false;
                     }
                 }
-            }
+            },
+
+            onNewCardEventHandler : function(data) {
+                this.cardCreationMode.boardId = data.boardId;
+                this.cardCreationMode.isActive = true;
+
+                
+                this.$emit('new-card-event', {'boardId' : this.boardId});
+            },
+
+            getBoardById : function(boardId) {
+                let board = undefined;
+                for (let i = 0; i < this.boardsWithCards.length; ++i) {
+                    if (this.boardsWithCards[i].boardId === boardId) {
+                        board = this.boardsWithCards[i];
+                    }
+                }
+
+                return board;
+            },
+
+            onCreateCardEventHandler : function(data) {
+            console.log ('onCreateCardEventHandler : ' + data)
+
+                let boardId = data.boardId;
+                let newCardName = data.name;
+                let cardDescription = data.description;
+                let cardTags = data.tags;
+
+                let board = this.getBoardById(boardId);
+
+                console.log(board);
+
+                if (board) {
+                    board.cards.push({
+                        'id' : ++this.lastCardId,
+                            'title' : newCardName,
+                            'smallDescription' : cardDescription,
+                            'tags' : cardTags
+                    })
+                }
+
+                this.cardCreationMode.isActive = false;
+            },
+
+            onCancelCreateCard : function () {
+                console.log('board');
+                this.cardCreationMode.isActive = false;
+            },
+
 
         },
         watch:{}
@@ -239,7 +333,7 @@ import BoardItem from './Board.vue'
     /* END DEBUG */
 
     width: 80%;
-    display: flex;  
+    display: flex;
 
 }
 
@@ -260,24 +354,6 @@ import BoardItem from './Board.vue'
 
     flex-direction: column;
 
-}
-
-.add-board-div button {
-    /* background-color: #e3f0fa;
-    border: 2px solid rgb(175, 190, 200);
-
-    border-radius: 6px;
-
-    height: 30px;
-    width: 30px;
-    
-    cursor: pointer;
-
-    box-sizing: border-box;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;   */
 }
 
 .add-board-div input {

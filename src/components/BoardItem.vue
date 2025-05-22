@@ -17,7 +17,7 @@
                  <!-- <div class="board-header-param">
                     <button @click="onDeleteBoard">
                         <div>
-                            <span class="board-close-x">&#xD7;</span>
+                            <span class="board-x">&#xD7;</span>
                         </div>
                     </button>
                 </div> -->
@@ -25,7 +25,7 @@
                 <div class="one-icon-button-div">
                     <button @click="onDeleteBoard">
                         <!-- <div> -->
-                            <span class="board-close-x-inner">&#xD7;</span> 
+                            <span class="board-x-inner">&#xD7;</span> 
                         <!-- </div> -->
                     </button>
                 </div>
@@ -115,6 +115,7 @@ export default {
             // console.log(content); // C'est un élément DOM
             // // Tu peux faire ce que tu veux avec, par exemple :
             // content.innerHTML = ;
+            this.$emit('new-card-event', {'boardId' : this.boardId});
         },
         onDrop : function (event) {
             console.log(event)
@@ -140,15 +141,8 @@ export default {
         }
     },
     mounted : function() {
-                if (this.doEditName) {
-            console.log(' LA LA LA LA LA');
-                }
-                else {
-                    console.log ('WTF JS ????')
-                }
-        console.log('mounted this.doEditName = ' + this.doEditName)
+        // console.log('mounted this.doEditName = ' + this.doEditName)
         if (this.doEditName) {
-            console.log(' LA LA LA LA LA');
             this.$refs['board-input-name'].focus();
             // document.getElementById('board-input-name').focus();
         }
@@ -202,7 +196,7 @@ export default {
 }
 
 .board-title {
-    /* border: 1px solid green; */
+    border: 1px solid green;
 
     /* background-color: #a6acee;
     border-top-left-radius: 8px;
@@ -324,7 +318,7 @@ export default {
 //     font-size: 30px;
 // }
 
-// .board-header-param button div span.board-close-x {
+// .board-header-param button div span.board-x {
 //     display: flex;
 
 //     align-items: center;
