@@ -6,9 +6,15 @@
                 <div class="board-title">
                     <span v-if="!doEditName">{{boardTitle}}</span>
                     <!-- <input v-if="doEditName" id="board-input-name" v-model="boardName" @focusout="onNameChanged"> -->
-                    <form v-if="doEditName" @submit="onNameChanged">
+
+
+                    <!-- <form v-if="doEditName" @submit.prevent="onNameChanged">
                         <input id="board-input-name" ref="board-input-name" @focusout="onNameChanged" v-model="boardName" >
-                    </form>
+                    </form> -->
+
+
+                    <input v-if="doEditName" id="board-input-name" ref="board-input-name" @focusout="onNameChanged" @keyup.enter="onNameChanged" v-model.trim="boardName" >
+
                 </div>
                 <!-- <div class="board-header-param"><span>&#10242;&#10242;&#10242;</span></div>   -->
                  <div v-if="displayOptions" class="board-header-param">
@@ -36,10 +42,14 @@
                 <!-- <CardView></CardView>  -->
 
                 <!-- <div class="content-centered-div"> -->
-                    <CardView v-for="card in cards" v-bind:key="card.id" 
+                    <!-- <CardView v-for="card in cards" v-bind:key="card.id" 
                         :cardId="card.id"
                         :title="card.title"
                         :tags="card.tags"
+                        :small-description="card.smallDescription"></CardView> -->
+                    <CardView v-for="card in cards" v-bind:key="card.id" 
+                        :cardId="card.id"
+                        :title="card.title"
                         :small-description="card.smallDescription"></CardView>
 
                         <!-- <div class="alacon" style="background-color: brown; width: 100px; height: 100px; border: 1px solid black;"></div>
@@ -57,6 +67,7 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
 import CardView from './CardView.vue'
 
 export default {
@@ -67,7 +78,8 @@ export default {
     data: function() {
         return {
             displayOptions : false,
-            boardName : ''
+            boardName : '',
+            // doEditName : true,
         }
     },
     props : {
@@ -79,33 +91,52 @@ export default {
             type: Number,
             default : -1,
         },
-        cards : {
-            type : Array,
-            default : () => [
-                {
-                id : 0,
-                tags : [
-                    {
-                        name : 'tag 1',
-                        color: '#dfe2a0'
-                    },
-                {
-                    name : 'tag 2',
-                    color : '#ffa3f9'
-                }],
-                title : 'Card Title 1',
-                smallDescription : 'A small description for the card 1'
-            },
-            {
-                id : 1,
-                tags : [],
-                title : 'Card Title 2',
-                smallDescription : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
-            }]
+        // cards : {
+        //     type : Array,
+        //     default : () => [
+        //         {
+        //         id : 0,
+        //         tags : [
+        //             {
+        //                 name : 'tag 1',
+        //                 color: '#dfe2a0'
+        //             },
+        //         {
+        //             name : 'tag 2',
+        //             color : '#ffa3f9'
+        //         }],
+        //         title : 'Card Title 1',
+        //         smallDescription : 'A small description for the card 1'
+        //     },
+        //     {
+        //         id : 1,
+        //         tags : [],
+        //         title : 'Card Title 2',
+        //         smallDescription : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
+        //     }]
+        // },
+
+
+        // doEditName : {
+        //     type : Boolean,
+        //     default : false
+        // }
+    },
+    computed : {
+        ...mapGetters[{
+            // getCardsByBoardId : 'getCardsByBoardId',
+            getCardsForBoard : 'getCardsForBoard'
+        }],
+        doEditName() {
+            return this.boardTitle === '';
         },
-        doEditName : {
-            type : Boolean,
-            default : false
+        cards : function() {
+           
+            // console.log('############################################')
+            // const cards = this.$store.getters.getCardsForBoard(this.boardId);
+            // console.log(cards)
+            // console.log('############################################')
+            return this.$store.getters.getCardsForBoard(this.boardId);
         }
     },
     methods : {
@@ -119,26 +150,46 @@ export default {
         },
         onDrop : function (event) {
             console.log(event)
-
             console.log('id = ' + event.target.id)
 
             const cardId = event.dataTransfer.getData('cardId');
             console.log (this.boardTitle);
 
-            this.$emit('onCardDropped', {'cardId' : cardId, 'targetBoard' : this.boardTitle});
+            
+            console.log(this.$store.getters.getAvailableTagsForCardId(cardId))
+
+            //this.$emit('onCardDropped', {'cardId' : cardId, 'targetBoard' : this.boardTitle});
+            // this.$emit('onCardDropped', {'cardId' : cardId, 'boardId' : this.boardId});
+            this.$store.dispatch('moveCardToBoard', {
+                'boardIdSrc' : undefined,
+                'boardIdDest' : this.boardId,
+                'cardId' : cardId
+            })
         },
         onDeleteBoard : function () {
             console.log('onDeleteBoard')
             this.$emit('delete-board-event', {'boardId' : this.boardId})
         },
         onNameChanged : function(e) {
+            //this.doEditName = false;
             console.log('onNameChanged ' + this.boardName);
             console.log(e);
-            this.$emit('name-changed-event', {
-                'boardId' : this.boardId,
-                'newName' : this.boardName
+            // this.$emit('name-changed-event', {
+            //     'boardId' : this.boardId,
+            //     'newName' : this.boardName
+            // });
+
+            this.$store.dispatch('renameBoard', {
+                boardId : this.boardId,
+                newBoardName : this.boardName
+            })
+        },
+        enableEdit() {
+            this.doEditName = true;
+            this.$nextTick(() => {
+                this.$refs['board-input-name']?.focus();
             });
-        }
+        },
     },
     mounted : function() {
         // console.log('mounted this.doEditName = ' + this.doEditName)

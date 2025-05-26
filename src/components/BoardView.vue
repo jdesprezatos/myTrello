@@ -9,10 +9,19 @@
         </div> -->
 
         <div class="table-view-table-container">
-            <BoardItem v-for="board in boardsWithCards" :key="board.boardId" 
+            <!-- <BoardItem v-for="board in wtfDudde" :key="board.boardId" 
             :boardTitle="board.boardTitle"
             :boardId="board.boardId" 
             :cards="board.cards"
+            :doEditName="board.doEditName"
+            @onCardDropped="onCardDroppedEventHandler"
+            @delete-board-event="onDeleteBoardEventHandler"
+            @name-changed-event="onBoardNameChanged"
+            @new-card-event="onNewCardEventHandler"
+            > -->
+            <BoardItem v-for="board in wtfDudde" :key="board.boardId" 
+            :boardTitle="board.boardTitle"
+            :boardId="board.boardId" 
             :doEditName="board.doEditName"
             @onCardDropped="onCardDroppedEventHandler"
             @delete-board-event="onDeleteBoardEventHandler"
@@ -69,6 +78,7 @@
 
 <script>
 
+import { mapState, mapGetters } from 'vuex';
 import BoardItem from './BoardItem.vue'
 //import CreateCardPanel from './CreateCardPanel.vue'
 
@@ -84,75 +94,70 @@ import BoardItem from './BoardItem.vue'
                 categories : ['To Do', 'Doing', 'Done'],
                 ladtBoardId : 3,
                 lastCardId : 3,
-                boardsWithCards : [
-                    {
-                        boardId : 0,
-                        boardTitle : 'To Do',
-                        cards : [
-                            {
-                            id : 0,
-                            tags : [
-                                {
-                                    name : 'tag 1',
-                                    color: '#dfe2a0'
-                                },
-                                {
-                                    name : 'tag 2',
-                                    color : '#ffa3f9'
-                                }],
-                            title : 'Test Card Title in Data',
-                            smallDescription : 'A small description for the card 1'
-                        },
-                        {
-                            id : 1,
-                            tags : [],
-                            title : 'Card Title 2',
-                            smallDescription : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
-                        }]
-                    },
+                // boardsWithCards : [
+                //     {
+                //         boardId : 0,
+                //         boardTitle : 'To Do',
+                //         cards : [
+                //             {
+                //             id : 0,
+                //             tags : [
+                //                 {
+                //                     name : 'tag 1',
+                //                     color: '#dfe2a0'
+                //                 },
+                //                 {
+                //                     name : 'tag 2',
+                //                     color : '#ffa3f9'
+                //                 }],
+                //             title : 'Test Card Title in Data',
+                //             smallDescription : 'A small description for the card 1'
+                //         },
+                //         {
+                //             id : 1,
+                //             tags : [],
+                //             title : 'Card Title 2',
+                //             smallDescription : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
+                //         }]
+                //     },
 
 
-                    {
-                        boardId : 1,
-                        boardTitle : 'Doing',
-                        cards : [
-                        {
-                            id : 2,
-                            tags : [],
-                            title : 'Aliquam pellentesque',
-                            smallDescription : 'Nulla elit augue, bibendum ut erat non, imperdiet faucibus ipsum. Sed facilisis mollis odio sit amet fermentum.'
-                        }]
-                    },
+                //     {
+                //         boardId : 1,
+                //         boardTitle : 'Doing',
+                //         cards : [
+                //         {
+                //             id : 2,
+                //             tags : [],
+                //             title : 'Aliquam pellentesque',
+                //             smallDescription : 'Nulla elit augue, bibendum ut erat non, imperdiet faucibus ipsum. Sed facilisis mollis odio sit amet fermentum.'
+                //         }]
+                //     },
 
 
-                    {
-                        boardId : 2,
-                        boardTitle : 'Done',
-                        cards : [
-                            {
-                            id : 3,
-                            tags : [
-                                {
-                                    name : 'tag 3',
-                                    color: '#b3ddff'
-                                }],
-                            title : 'Card Title 1',
-                            smallDescription : 'A small description for the card 3'
-                        }]
-                    },
+                //     {
+                //         boardId : 2,
+                //         boardTitle : 'Done',
+                //         cards : [
+                //             {
+                //             id : 3,
+                //             tags : [
+                //                 {
+                //                     name : 'tag 3',
+                //                     color: '#b3ddff'
+                //                 }],
+                //             title : 'Card Title 1',
+                //             smallDescription : 'A small description for the card 3'
+                //         }]
+                //     },
 
-                    {
-                        boardId : 3,
-                        boardTitle : 'TEST nom assez long pour avoir une autre ligne',
-                        cards : []
-                    },
+                //     {
+                //         boardId : 3,
+                //         boardTitle : 'TEST nom assez long pour avoir une autre ligne',
+                //         cards : []
+                //     },
 
-                    // {
-                    //     boardId : 4,
-                    //     boardTitle : 'TEST 2',
-                    //     cards : []
-                    // },
-                ],
+                // ],
                 
                 newBoardName : '<NEW_BOARD_NAME>',
                 cardCreationMode : {
@@ -161,57 +166,93 @@ import BoardItem from './BoardItem.vue'
                 }
             }
         },
-        computed: {},
+        computed: {
+            ...mapState({
+                boards : 'boards'
+            }),
+            ...mapGetters([
+                {
+                    getBoards : "getBoards",
+                    getCard : "getCard"
+                }
+            ]),
+            // boards() {
+            //     return this.getBoards(); // marche pas
+            // }
+            wtfDudde () {
+                let trace = false;
+                trace ? console.log(this.$store.getters.getBoards()) : {};
+                return this.$store.getters.getBoards();
+
+            }
+        },
         methods: {
             onCardDroppedEventHandler : function (data) {
-                console.log ('onCardDroppedEventHandler data.cardId = ' + data.cardId + ' data.targetBoard = ' + data.targetBoard)
+                console.log ('onCardDroppedEventHandler data.cardId = ' + data.cardId + ' data.boardId = ' + data.boardId)
+                console.log(this.boards)
+                // let cardToMove = null;
 
-                let cardToMove = null;
+                // remove the card from the board
 
-                // First, search the card id in the current board to remove it
-                for (let board of this.boardsWithCards) {
-                    // for (let card of board.cards) {
-                    for (let i = 0; i < board.cards.length; ++i) {
-                        if (board.cards[i].id == data.cardId) {
-                            cardToMove = board.cards[i];
-                            console.log('found mf')
-                            board.cards.splice(i, 1);
-                        }
-                    }
-                }
+                // // First, search the card id in the current board to remove it
+                // for (let board of this.boardsWithCards) {
+                //     // for (let card of board.cards) {
+                //     for (let i = 0; i < board.cards.length; ++i) {
+                //         if (board.cards[i].id == data.cardId) {
+                //             cardToMove = board.cards[i];
+                //             console.log('found mf')
+                //             board.cards.splice(i, 1);
+                //         }
+                //     }
+                // }
 
-                // Search for the receiving category
-                for (let i = 0; i< this.boardsWithCards.length; ++i) {
-                    if (this.boardsWithCards[i].boardTitle == data.targetBoard) {
-                        this.boardsWithCards[i].cards.push(cardToMove)
-                    }
-                }
+                // // Search for the receiving category
+                // for (let i = 0; i< this.boardsWithCards.length; ++i) {
+                //     if (this.boardsWithCards[i].boardTitle == data.targetBoard) {
+                //         this.boardsWithCards[i].cards.push(cardToMove)
+                //     }
+                // }
+
+
+                // this.$store.dispatch('addCardToBoard', data.boardId, data.cardId);
+                this.$store.dispatch('moveCardFromBoard', {
+                    boardIdSrc : data.boardId,
+                    boardIdDest : this.boardId,
+                    cardId : data.cardId
+            });
 
             },
             onDeleteBoardEventHandler : function (data) {
-                let boardId = data.boardId;
-                let deleteIdx = -1;
+                // let boardId = data.boardId;
+                // let deleteIdx = -1;
 
-                console.log('onDeleteBoardEventHandler boardId = ' + boardId);
+                // console.log('onDeleteBoardEventHandler boardId = ' + boardId);
 
-                for (let i = 0; i < this.boardsWithCards.length; ++i) {
-                    if (this.boardsWithCards[i].boardId == boardId) {
-                        deleteIdx = i;
-                    }
-                }
+                // for (let i = 0; i < this.boardsWithCards.length; ++i) {
+                //     if (this.boardsWithCards[i].boardId == boardId) {
+                //         deleteIdx = i;
+                //     }
+                // }
 
-                console.log('deleteIdx = ' + deleteIdx);
+                // console.log('deleteIdx = ' + deleteIdx);
 
-                if (deleteIdx != -1) {
-                    this.boardsWithCards.splice(deleteIdx, 1);
-                }
+                // if (deleteIdx != -1) {
+                //     this.boardsWithCards.splice(deleteIdx, 1);
+                // }
 
-                console.log(this.boardsWithCards)
+                // console.log(this.boardsWithCards)
+                this.$store.dispatch('removeBoard', data.boardId)
             },
             onAddBoard : function (/*e*/) {
                 console.log('add board clicked'/* + e*/)
 
-                this.boardsWithCards.push({
+                // this.boardsWithCards.push({
+                //     'boardId' : ++this.ladtBoardId,
+                //     'boardTitle' : '',
+                //     'cards' : [],
+                //     'doEditName' : true
+                // })
+                this.$store.dispatch('addBoard', {
                     'boardId' : ++this.ladtBoardId,
                     'boardTitle' : '',
                     'cards' : [],
@@ -219,38 +260,41 @@ import BoardItem from './BoardItem.vue'
                 })
             },
             onBoardNameChanged : function(data) {
-                console.log('Board id = ' + data.boardId + ' new Board Name = ' + data.newName);
+                // console.log('Board id = ' + data.boardId + ' new Board Name = ' + data.newName);
 
-                let board = undefined;
-                for (let i = 0; i < this.boardsWithCards.length; ++i) {
-                    if (this.boardsWithCards[i].boardId === data.boardId) {
-                        board = this.boardsWithCards[i];
-                    }
-                }
+                // let board = undefined;
+                // for (let i = 0; i < this.boardsWithCards.length; ++i) {
+                //     if (this.boardsWithCards[i].boardId === data.boardId) {
+                //         board = this.boardsWithCards[i];
+                //     }
+                // }
 
-                if (!board) {
-                    return;
-                }
+                // if (!board) {
+                //     return;
+                // }
 
-                if (!data.newName) {
-                    console.log('new name is empty');
-                    // if name is edited revert the edit
+                // if (!data.newName) {
+                //     console.log('new name is empty');
+                //     // if name is edited revert the edit
 
-                    // if name is the name of a new board, delete the board
-                    //if (th)
-                    console.log('board.boardTitle = ' + board.boardTitle)
-                    if (!board.boardTitle) {
-                        console.log('LETS DELETE THE NEW ADDED BOARD THAT HAS NO NAME')
-                        this.onDeleteBoardEventHandler({'boardId' : data.boardId});
-                    }
-                }
+                //     // if name is the name of a new board, delete the board
+                //     //if (th)
+                //     console.log('board.boardTitle = ' + board.boardTitle)
+                //     if (!board.boardTitle) {
+                //         console.log('LETS DELETE THE NEW ADDED BOARD THAT HAS NO NAME')
+                //         this.onDeleteBoardEventHandler({'boardId' : data.boardId});
+                //     }
+                // }
 
-                for (let i = 0; i < this.boardsWithCards.length; ++i) {
-                    if (this.boardsWithCards[i].boardId === data.boardId) {
-                        this.boardsWithCards[i].boardTitle = data.newName;
-                        this.boardsWithCards[i].doEditName = false;
-                    }
-                }
+                // for (let i = 0; i < this.boardsWithCards.length; ++i) {
+                //     if (this.boardsWithCards[i].boardId === data.boardId) {
+                //         this.boardsWithCards[i].boardTitle = data.newName;
+                //         this.boardsWithCards[i].doEditName = false;
+                //     }
+                // }
+
+                console.log('onBoardNameChanged Board id = ' + data.boardId + ' new Board Name = ' + data.newName);
+                this.$store.dispatch('renameBoard', {'boardId' : data.boardId, 'newBoardName' : data.newName});
             },
 
             onNewCardEventHandler : function(data) {
@@ -258,10 +302,10 @@ import BoardItem from './BoardItem.vue'
                 this.cardCreationMode.isActive = true;
 
                 
-                this.$emit('new-card-event', {'boardId' : this.boardId});
+                this.$emit('new-card-event', {'boardId' : data.boardId});
             },
 
-            getBoardById : function(boardId) {
+            getBoardById(boardId) {
                 let board = undefined;
                 for (let i = 0; i < this.boardsWithCards.length; ++i) {
                     if (this.boardsWithCards[i].boardId === boardId) {
@@ -273,7 +317,8 @@ import BoardItem from './BoardItem.vue'
             },
 
             onCreateCardEventHandler : function(data) {
-            console.log ('onCreateCardEventHandler : ' + data)
+                console.log ('onCreateCardEventHandler : ')
+                console.log(data)
 
                 let boardId = data.boardId;
                 let newCardName = data.name;

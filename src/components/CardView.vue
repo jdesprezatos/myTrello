@@ -9,6 +9,7 @@
             <span class="span-tag" v-for="t in cardTags" :key="t">{{ t }} <button id="remove-tag-button"></button></span>
         </div> -->
         <div ref="tagDiv" id="tag-div">
+            <!-- <TagView v-for="tag in tags" :key="tag.name" :name="tag.name" :bgColor="tag.color"></TagView> -->
             <TagView v-for="tag in tags" :key="tag.name" :name="tag.name" :bgColor="tag.color"></TagView>
             <!-- <TagView v-for="(name, bgColor) in tagsTest" :key="name" :name="tag.name" :bgColor="bgColor"></TagView> -->
         </div>
@@ -18,6 +19,7 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
 import TagView from './TagView.vue'
 
 export default {
@@ -44,6 +46,16 @@ export default {
     },
     updated : function() {
         this.checkOverFlow()
+    },
+    computed : {  
+        ...mapGetters[{
+            getTagsByCardId : 'getTagsByCardId'
+        }],
+        tags() {
+            // console.log('this.$store.getters.getTagsByCardId(this.cardId) : ' + 'this.$store.getters.getTagsByCardId( '+ this.cardId + ')')
+            // console.log(this.$store.getters.getTagsByCardId(this.cardId))
+            return this.$store.getters.getTagsByCardId(this.cardId)
+        }
     },
     methods : {
         checkOverFlow : function() {
@@ -78,7 +90,7 @@ export default {
     },
     props : {
         cardId : Number,
-        tags : Array,
+        // tags : Array,
         title : {
             Type: String,
             default : 'Card Title'

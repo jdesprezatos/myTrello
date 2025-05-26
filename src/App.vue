@@ -21,12 +21,12 @@
             <button @click="onDisplayTable"><span v-if="!isTableVisible">DISPLAY</span><span v-if="isTableVisible">HIDE</span></button>
             <BoardView v-if="isTableVisible" @new-card-event="onNewCardEventHandler"></BoardView>
         </div>
-        <div>
+        <!-- <div>
             <CardView></CardView>
-        </div>
-        <div>
+        </div> -->
+        <!-- <div>
             <CardViewT></CardViewT>
-        </div>
+        </div> -->
      </div>
 
   </div>
@@ -35,8 +35,8 @@
 <script>
 //import HelloWorld from './components/HelloWorld.vue'
 import BoardView from './components/BoardView.vue'
-import CardView from './components/CardView.vue'
-import CardViewT from './components/test/CardViewTest.vue'
+// import CardView from './components/CardView.vue'
+// import CardViewT from './components/test/CardViewTest.vue'
 import CreateCardPanel from './components/CreateCardPanel.vue'
 import CreateTagView from './components/CreateTagView.vue'
 
@@ -44,7 +44,11 @@ import CreateTagView from './components/CreateTagView.vue'
 export default {
   name: 'App',
   components: {
-    BoardView, CardView, CardViewT, CreateCardPanel, CreateTagView
+    BoardView,
+    /* CardView, */
+    // CardViewT, 
+    CreateCardPanel, 
+    CreateTagView
   },
   data : function() {
     return {
@@ -61,11 +65,12 @@ export default {
         this.isTableVisible = !this.isTableVisible
     },
 
-                onNewCardEventHandler : function(data) {
+            onNewCardEventHandler : function(data) {
+                console.log(data)
                 this.cardCreationMode.boardId = data.boardId;
                 this.cardCreationMode.isActive = true;
 
-                
+
                 this.$emit('new-card-event', {'boardId' : this.boardId});
             },
 
@@ -74,28 +79,37 @@ export default {
                 this.cardCreationMode.isActive = false;
             },
 
-    onCreateCardEventHandler : function(data) {
-            console.log ('onCreateCardEventHandler : ' + data)
+        onCreateCardEventHandler : function(data) {
+            console.log ('onCreateCardEventHandler : ' )
+            console.log (data)
+            console.log (data.tags)
 
-                let boardId = data.boardId;
-                let newCardName = data.name;
-                let cardDescription = data.description;
-                let cardTags = data.tags;
+                // let boardId = data.boardId;
+                // let newCardName = data.name;
+                // let cardDescription = data.description;
+                // let cardTags = data.tags;
 
-                let board = this.getBoardById(boardId);
+                // let board = this.getBoardById(boardId);
 
-                console.log(board);
+                // console.log(board);
 
-                if (board) {
-                    board.cards.push({
-                        'id' : ++this.lastCardId,
-                            'title' : newCardName,
-                            'smallDescription' : cardDescription,
-                            'tags' : cardTags
-                    })
-                }
+                // if (board) {
+                //     board.cards.push({
+                //         'id' : ++this.lastCardId,
+                //             'title' : newCardName,
+                //             'smallDescription' : cardDescription,
+                //             'tags' : cardTags
+                //     })
+                // }
 
                 this.cardCreationMode.isActive = false;
+
+                this.$store.dispatch('createCardOnBoard', {
+                    'boardId' : data.boardId,
+                    'title' : data.name,
+                    'smallDescription' : data.description,
+                    'tags' : data.tags
+                })
             },
   }
 }

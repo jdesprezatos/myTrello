@@ -1,7 +1,14 @@
 <template>
     <!-- <span class="tag-span" :style="{'background-color':bgColor, color:textColor}">{{ shortName }}<button id="remove-tag-button" :style="{color:textColor}"></button></span> -->
     <div>
-        <span class="tag-span" :style="{'background-color':bgColor, color:textColor}">{{ shortName }}<button v-if="canRemove" id="remove-tag-button"></button></span>
+        <span class="tag-span" 
+        :class="{clickable: isClickable }" 
+        :style="{'background-color':bgColor, color:textColor}"
+        @click="onTagClicked"
+        >
+        {{ shortName }}
+        <button v-if="canRemove" id="remove-tag-button"></button>
+    </span>
     </div>
 </template>
 
@@ -10,7 +17,7 @@
         name:'TagView',
         data: function() {
             return { 
-                tagName : 'TAGNAME'
+                tagName : 'TAGNAME',
             }
         },
         computed : {
@@ -33,6 +40,8 @@
                     r = Number('0x'+r);
                     g = Number('0x'+g);
                     b = Number('0x'+b);
+                    r = Number((r * 0.75).toFixed());
+                    b = b / 2;
                     let colors = [r, g, b]
 
                     let min = 255
@@ -55,6 +64,7 @@
             }
         },
         props : {
+            tagId : Number,
             name : String,
             canRemove : {
                 type : Boolean,
@@ -63,6 +73,16 @@
             bgColor : {
                 type : String,
                 default : '#f9bd9f'
+            },
+            isClickable : {
+                type : Boolean,
+                default : false
+            }
+        },
+        methods: {
+            onTagClicked : function(/*event*/) {
+                console.log('onTagClicked tagId : ' + this.tagId + ' tag name : ' + this.name)
+                this.$emit('tag-clicked', {'tagId' : this.tagId});
             }
         }
     }
@@ -86,6 +106,10 @@
     user-select: text;
 
     width: fit-content;
+}
+
+.clickable {
+    cursor: pointer;
 }
 
 #remove-tag-button {

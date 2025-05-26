@@ -6,10 +6,13 @@
         </div> -->
 
         <div class="existing-tags-div">
-            <TagView v-for="tag in existingTags" v-bind:key="tag.name"
+            <TagView v-for="tag in availableTags" v-bind:key="tag.id"
+            :tagId="tag.id"
             :name="tag.name"
             :bgColor="tag.color"
             :canRemove="false"
+            :isClickable="true"
+            @tag-clicked="onTagClicked"
             ></TagView>
         </div>
 
@@ -20,7 +23,7 @@
             <div v-if="!displayAddTag">
                 <div id="create-tag-input-div">
                     <div>
-                        <input ref="new-tag-name-ref" v-model="tagName">
+                        <input ref="new-tag-name-ref" @keydown.enter.prevent="createNewTag" @keyup.enter:="createNewTag" v-model.trim="tagName">
                     </div>
                     <div>
                         <input id="input-color" v-model="color" type="color">
@@ -38,6 +41,7 @@
 
 <script>
 import TagView from './TagView.vue';
+import {mapGetters, mapState} from "vuex"
 
 
 export default {
@@ -46,42 +50,80 @@ export default {
     data : function() { return {
             tagName : '',
             displayAddTag : false,
-            color : '#73c55a',
+            color : '#73c55a'
     }},
-    props : {
-        existingTags : {
-            Type: Array,
-            default : function() {return [
-                {
-                    name : 'consectetur',
-                    color: '#dfe2a0'
-                },
-                {
-                    name : 'adipiscing',
-                    color : '#ffa3f9'
-                },
-                {
-                    name : 'Aliquam',
-                    color : '#a3baff'
-                },
-                {
-                    name : 'ornare semper',
-                    color : '#8fe98b'
-                },
-                {
-                    name : 'ornare dqsdsq',
-                    color : '#8fe98b'
-                },
-                {
-                    name : 'ornare aaezae',
-                    color : '#8fe98b'
-                },
-                {
-                    name : 'ornare semcccxwcxper',
-                    color : '#8fe98b'
-                }
-            ]}
+
+    computed : {
+        ...mapState({
+            tags : 'tags',
+        }),
+        ...mapGetters({
+            getAvailableTagsForCardId : 'getAvailableTagsForCardId'
+        }),
+        notYetSelectedTags : function() {
+            return this.existingTags;
+        },
+        availableTags : function() {
+            const doTrace = false;
+            
+            doTrace ? console.log('######################################################################') : {};
+            //return Object.values(state.tags).filter(tag => card.tags.contain(tag.id))
+
+            //const allTags = this.$store.getters.getTags();
+            if (doTrace) {
+                const listIdTagNotInCard = Object.keys(this.tags).filter(k => {
+                    console.log(k)
+                    console.log(this.existingTags)
+                    console.log(this.existingTags.includes(Number(k)))
+                    return !this.existingTags.includes(Number(k));
+                })
+                console.log(listIdTagNotInCard);
+            }
+
+            // const wtfJs = Object.keys(state.tags).filter(k => {console.log(k); return true})
+            // console.log(wtfJs);
+            
+
+            return Object.keys(this.tags).filter(k => !this.existingTags.includes(Number(k))).map(tagId => this.tags[tagId])
         }
+    },
+
+    props : {
+        cardId : -1,
+        existingTags : []
+        // existingTags : {
+        //     Type: Array,
+        //     default : function() {return [
+        //         {
+        //             name : 'consectetur',
+        //             color: '#dfe2a0'
+        //         },
+        //         {
+        //             name : 'adipiscing',
+        //             color : '#ffa3f9'
+        //         },
+        //         {
+        //             name : 'Aliquam',
+        //             color : '#a3baff'
+        //         },
+        //         {
+        //             name : 'ornare semper',
+        //             color : '#8fe98b'
+        //         },
+        //         {
+        //             name : 'ornare dqsdsq',
+        //             color : '#8fe98b'
+        //         },
+        //         {
+        //             name : 'ornare aaezae',
+        //             color : '#8fe98b'
+        //         },
+        //         {
+        //             name : 'ornare semcccxwcxper',
+        //             color : '#8fe98b'
+        //         }
+        //     ]}
+        // }
     },
 
     methods : {
@@ -92,6 +134,9 @@ export default {
             this.$nextTick(() => {
                 this.$refs['new-tag-name-ref'].focus();  
             });
+        },
+        onTagClicked : function(payload) {
+            this.$emit('tag-clicked', payload);
         },
 
         // handleClickOutside(event) {
@@ -113,7 +158,12 @@ export default {
         createNewTag : function() {
             if (this.tagName && this.tagName != '') {
                 console.log(this.color);
-                this.$emit('tag-created', {'name': this.tagName, 'color' :this.color })
+                let createdTag = {'name': this.tagName, 'color' :this.color };
+                this.$emit('tag-created', createdTag)
+
+                this.$store.dispatch('createTag', createdTag);
+                console.log(this.$store.tags)
+                this.tagName = '';
             }
         }
     },
