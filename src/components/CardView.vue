@@ -5,13 +5,8 @@
         @dragend="onDragEnd"
         >
         <div id="title-div"> <span draggable="false" @drag.stop @dragstart.stop @dragend.stop>{{title}}</span></div>
-        <!-- <div id="tag-div">
-            <span class="span-tag" v-for="t in cardTags" :key="t">{{ t }} <button id="remove-tag-button"></button></span>
-        </div> -->
         <div ref="tagDiv" id="tag-div">
-            <!-- <TagView v-for="tag in tags" :key="tag.name" :name="tag.name" :bgColor="tag.color"></TagView> -->
-            <TagView v-for="tag in tags" :key="tag.name" :name="tag.name" :bgColor="tag.color"></TagView>
-            <!-- <TagView v-for="(name, bgColor) in tagsTest" :key="name" :name="tag.name" :bgColor="bgColor"></TagView> -->
+            <TagView v-for="tag in tags" :key="tag.name" :name="tag.name" :bgColor="tag.color" :canRemove="false"></TagView>
         </div>
         <div id="small-desc-div"><span>{{ smallDescription }}</span></div>
     </div>
@@ -29,8 +24,6 @@ export default {
     },
     data : function() {
         return {
-            // title : 'Card Title',
-            description : 'Card Description',
             tagBgColorRedefined : '#aeaeae',
             tagsTest : [
                 {
@@ -52,25 +45,21 @@ export default {
             getTagsByCardId : 'getTagsByCardId'
         }],
         tags() {
-            // console.log('this.$store.getters.getTagsByCardId(this.cardId) : ' + 'this.$store.getters.getTagsByCardId( '+ this.cardId + ')')
-            // console.log(this.$store.getters.getTagsByCardId(this.cardId))
             return this.$store.getters.getTagsByCardId(this.cardId)
+        },
+        smallDescription : function() {
+            if (this.description.length > 252) {
+                return this.description.slice(0,248) + ' [...]';
+            }
+            return this.description;
         }
     },
     methods : {
         checkOverFlow : function() {
-            // const domDiv = this.$refs.tagDiv;
-            // const mainDiv = this.$refs.mainBox;
-
-            // console.log('Main div : h = ' + domDiv.clientHeight + ' w = ' + mainDiv.clientWidth)
-            // console.log('checkOverFlow ' + domDiv.scrollHeight + ' ' + domDiv.scrollWidth )
             return false;
         },
         onDragstart : function(event) {
             let t = event.target;
-
-            // event.data .setData('cardId', target.id)
-            //event.dataTransfer.setData('cardId', 42)
             event.dataTransfer.setData('cardId', this.cardId)
             
             setTimeout(() => {
@@ -90,14 +79,13 @@ export default {
     },
     props : {
         cardId : Number,
-        // tags : Array,
         title : {
             Type: String,
             default : 'Card Title'
         },
-        smallDescription : {
+        description : {
             type: String,
-            default : 'small description but not to small either (at least one more line to see)'
+            default : 'Mais p*****, c\'est quoi ce language de con sans aucun check et du coup on ne sais pas où il faut modifier dès qu\'il y a un changement'
         }
     }
 }
@@ -107,15 +95,13 @@ export default {
 
 
 #mainBox {
-    /* border: 2px solid rgb(145, 200, 150); */
     border: 1px solid transparent;
     border-radius: 6px;
     max-width: 370px;
     min-width: 120px;
 
-    /* background-color: rgb(197, 247, 200); */
     background-color: rgb(255, 255, 255);
-    box-shadow: 2px 2px 6px rgb(192, 192, 192);
+    box-shadow: 2px 2px 6px rgb(162, 162, 162);
 
     padding: 3px;
     margin: 3px;
@@ -155,40 +141,4 @@ export default {
     
     pointer-events : none;
 }
-
-/*.span-tag {
-    display: flex;
-    flex-direction: row;
-    font-size: 0.75em;
-
-    margin: 2px;
-    padding: 3px;
-    border: solid 2px  #656565; 
-    border-radius: 6px;
-
-    background-color: #f9bd9f;
-}*/
-
-/*#remove-tag-button {
-    background-color: transparent;
-    border: 0;
-    margin: -2px;
-}*/
-
-/*#remove-tag-button:after{
-  display: inline-block;
-  background-color: transparent;
-  content: "\00d7";
-  border: 1 solid #fefefe;
-}*/
-
-/*
-#remove-tag-button:hover{
-    cursor: pointer;
-}*/
-
-/* .card {
-    border: 1px solid red
-} */
-
 </style>

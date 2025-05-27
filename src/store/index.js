@@ -5,7 +5,6 @@ Vue.use(Vuex)
 
 export default new Store({
     state: {
-        //existingTags : [],
         lastBoardId: 3,
         lastCardId: 13,
         lastTagId: 103,
@@ -13,56 +12,17 @@ export default new Store({
             0 : {
                 boardId : 0,
                 boardTitle : 'To Do',
-                // cards : [
-                //     {
-                //     id : 0,
-                //     tags : [
-                //         {
-                //             name : 'tag 1',
-                //             color: '#dfe2a0'
-                //         },
-                //         {
-                //             name : 'tag 2',
-                //             color : '#ffa3f9'
-                //         }],
-                //     title : 'Test Card Title in Data',
-                //     smallDescription : 'A small description for the card 1'
-                //     },
-                //     {
-                //         id : 1,
-                //         tags : [],
-                //         title : 'Card Title 2',
-                //         smallDescription : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
-                //     }
                 cards : [10, 11]
             },
             1:{
                 boardId : 1,
                 boardTitle : 'Doing',
-                // cards : [
-                // {
-                //     id : 2,
-                //     tags : [],
-                //     title : 'Aliquam pellentesque',
-                //     smallDescription : 'Nulla elit augue, bibendum ut erat non, imperdiet faucibus ipsum. Sed facilisis mollis odio sit amet fermentum.'
-                // }]
                 cards : [12]
             },
 
             2:{
                 boardId : 2,
                 boardTitle : 'Done',
-                // cards : [
-                //     {
-                //     id : 3,
-                //     tags : [
-                //         {
-                //             name : 'tag 3',
-                //             color: '#b3ddff'
-                //         }],
-                //     title : 'Card Title 1',
-                //     smallDescription : 'A small description for the card 3'
-                // }]
                 cards : [13]
             },
 
@@ -75,43 +35,29 @@ export default new Store({
         cards : {
             10 : {
                 id: 10,
-                // tags: [
-                //     {
-                //         name: 'tag 1',
-                //         color: '#dfe2a0'
-                //     },
-                //     {
-                //         name: 'tag 2',
-                //         color: '#ffa3f9'
-                //     }],
                 tags : [101,102],
                 title: 'Test Card Title in Data',
-                smallDescription: 'A small description for the card 1'
+                description: 'A small description for the card 1'
             },
             11 : {
                 id: 11,
                 tags: [],
                 title: 'Card Title 2',
-                smallDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare semper elit eu dictum. Aliquam id blandit lacus.'
             },
 
             12 : {
                 id: 12,
                 tags: [],
                 title: 'Aliquam pellentesque',
-                smallDescription: 'Nulla elit augue, bibendum ut erat non, imperdiet faucibus ipsum. Sed facilisis mollis odio sit amet fermentum.'
+                description: 'Nulla elit augue, bibendum ut erat non, imperdiet faucibus ipsum. Sed facilisis mollis odio sit amet fermentum.'
             },
 
             13:{
                 id: 13,
-                // tags: [
-                //     {
-                //         name: 'tag 3',
-                //         color: '#b3ddff'
-                //     }],
                 tags : [103],
                 title: 'Card Title 1',
-                smallDescription: 'A small description for the card 3'
+                description: 'A small description for the card 3'
             },
         },
 
@@ -137,28 +83,8 @@ export default new Store({
     getters: {
         getBoards: function(state) {
             return function( ) {
-                // let trace = true
-                // trace ? console.log(state.boards) : {};
-                // const inter = state.boards.map(keyValueObj => {
-                //     trace ? console.log(keyValueObj) : {};
-                //     const key = Object.keys(keyValueObj)[0];
-                //     trace ? console.log(key) : {};
-                //     trace ? console.log(keyValueObj[key]) : {};
-                //     return keyValueObj[key];
-                // })
-                
-                // trace ? console.log('===============') : {};
-                // trace ? console.log(inter) : {};
-                // trace ? console.log('===============') : {};
-                // return inter
                 return Object.values(state.boards);
             }
-            //return state.boards;
-            // return state.boards.map(keyValueObj => {
-            //     console.log('WTF ! ' + state.boards)
-            //     const key = Object.keys(keyValueObj)[0];
-            //     return keyValueObj[key];
-            // })
         },
         getBoard: state => {
             return function (id) {
@@ -182,9 +108,6 @@ export default new Store({
                 const board = getters.getBoard(boardId);
                 trace ? console.log('getters.getBoard(boardId) : ') : {} ;
                 trace ? console.log(board): {} ;
-                // const realBoardObj = Object.values(board)[0]
-                // trace ? console.log('Object.values(board)[0] : ') : {} ;
-                // trace ? console.log(realBoardObj): {} ;
                 return board.cards.map(getters.getCard);
             }
         },
@@ -195,9 +118,6 @@ export default new Store({
                 const board = getters.getBoard(boardId);
                 trace ? console.log('getters.getBoard(boardId) : ') : {} ;
                 trace ? console.log(board): {} ;
-                // const realBoardObj = Object.values(board)[0]
-                // trace ? console.log('Object.values(board)[0] : ') : {} ;
-                // trace ? console.log(realBoardObj): {} ;
                 return board.cards.map(getters.getCard);
             }
         },
@@ -208,11 +128,6 @@ export default new Store({
                 const card = getters.getCard(cardId);
                 trace ? console.log('getters.getCard(cardId) : ') : {} ;
                 trace ? console.log(card): {} ;
-                // // const realCardObj = Object.values(card)[0]
-                // // trace ? console.log('Object.values(card)[0] : ') : {} ;
-                // // trace ? console.log(realCardObj): {} ;
-                // return card.tags.map(getters.getTag);
-
                 return card.tags.map(getters.getTag);
             }
         },
@@ -232,22 +147,15 @@ export default new Store({
                 trace ? console.log('######################################################################') : {} ;
                 const card = getters.getCard(cardId)
                 if (card) {
-                    //return Object.values(state.tags).filter(tag => card.tags.contain(tag.id))
-
-                if (trace) {
-                    const listIdTagNotInCard = Object.keys(state.tags).filter(k => {
-                        console.log(k)
-                        console.log(card.tags)
-                        console.log(card.tags.includes(Number(k)))
-                        return !card.tags.includes(Number(k));
-                    })
-                    console.log(listIdTagNotInCard);
-                }
-
-                    // const wtfJs = Object.keys(state.tags).filter(k => {console.log(k); return true})
-                    // console.log(wtfJs);
-                    
-
+                    if (trace) {
+                        const listIdTagNotInCard = Object.keys(state.tags).filter(k => {
+                            console.log(k)
+                            console.log(card.tags)
+                            console.log(card.tags.includes(Number(k)))
+                            return !card.tags.includes(Number(k));
+                        })
+                        console.log(listIdTagNotInCard);
+                    }
                     return Object.keys(state.tags).filter(k => !card.tags.includes(Number(k))).map(tagId => state.tags[tagId])
                 }
 
@@ -270,12 +178,9 @@ export default new Store({
             console.log(board === null)
             console.log(board)
             if (!board) {
-            console.log('sqdsqdsqds')
-                //state.boards[newBoard.boardId] = newBoard;
                 Vue.set(state.boards,newBoard.boardId,newBoard);
                 console.log(state.boards)
             }
-            // board with the same id exist just ignore or replace ?.????
         },
         INCREMENT_LAST_BOARD_ID(state) {
             state.lastBoardId++;
@@ -302,18 +207,9 @@ export default new Store({
             state.lastTagId++;
         },
         ADD_CARD_TO_BOARD(state, boardId, cardId) {
-            // let board = state.getters.getBoard(boardId)
             const board = state.boards[boardId]
 
             board.cards.push(cardId)
-
-            // if (board) {
-            //     for (let idx = 0; idx < board.cards.length; ++idx) {
-            //         if (boardCardId == cardId) {
-            //             board.cards.splice(idx, 1)
-            //         }
-            //     }
-            // }
         },
         MOVE_CARD_TO_BOARD(state, payload) {
             const { boardIdDest, cardId } = payload;
@@ -334,7 +230,7 @@ export default new Store({
             }
         },
         CREATE_CARD_ON_BOARD(state,payload) {
-            const { boardId, title, smallDescription, tags } = payload;
+            const { boardId, title, description, tags } = payload;
             const board = state.boards[boardId];
 
             if (board) {
@@ -342,7 +238,7 @@ export default new Store({
                 const newCard = {
                     'id' : newCardId,
                     'title' : title,
-                    'smallDescription' : smallDescription,
+                    'description' : description,
                     'tags' : tags
                 }
 
@@ -384,22 +280,11 @@ export default new Store({
             commit('RENAME_BOARD',  {boardId, newBoardName});
         },
         createTag({commit, state}, tag) {
-            // let existingTags = this.state.tags;
-            // for (let existingTag of existingTags) {
-            //     if (existingTag.name == tag.name) {
-            //         return;
-            //     }
-            // }
-            // console.log(state.tags)
             console.log(tag.name.length)
             // #FF22AA
             if (tag.name[0] == '#' && 
                 tag.name.length > 6
             ) {
-                // let charArray = tag.name.slice(1, 7);
-                // console.log(charArray);
-                // charArray = charArray.split("");
-                // console.log(charArray);
                 let allHexChar = true;
                 tag.name.slice(1, 7).split("").forEach(c => allHexChar = allHexChar && (Number('0x'+c) < 17))
 

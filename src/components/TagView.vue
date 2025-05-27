@@ -7,7 +7,7 @@
         @click="onTagClicked"
         >
         {{ shortName }}
-        <button v-if="canRemove" id="remove-tag-button"></button>
+        <button v-if="canRemove" :style="{color:textColor}" id="remove-tag-button" @click.stop="onTagCloseClicked"></button>
     </span>
     </div>
 </template>
@@ -83,7 +83,11 @@
             onTagClicked : function(/*event*/) {
                 console.log('onTagClicked tagId : ' + this.tagId + ' tag name : ' + this.name)
                 this.$emit('tag-clicked', {'tagId' : this.tagId});
-            }
+            },
+            onTagCloseClicked : function() {
+                console.log('onTagCloseClicked tagId : ' + this.tagId + ' tag name : ' + this.name)
+                this.$emit('tag-close', {'tagId' : this.tagId});
+            },
         }
     }
 </script>

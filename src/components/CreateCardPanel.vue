@@ -12,16 +12,23 @@
                     </button>
                 </div> 
             </div>
-            <form id="ccp-form" v-on:submit.prevent="onSubmitNewCard">
+            <!-- <form id="ccp-form" v-on:submit.prevent="onSubmitNewCard"> -->
+            <div  id="ccp-form">
                 <div id="ccp-name-div">
                     <span class="ccp-label-span">Name : </span>
                     <div class="ccp-input-div">
-                    <input v-model="cardName"></div>
+                    <input v-model="cardName" ref="cardNameInputRef"></div>
                 </div>
                 <div id="ccp-tags-div">
                     <span class="ccp-label-span">Tags : </span>
                     <div id="ccp-tags-content-div" class="flex-h-center" style="position: relative;">
-                        <TagView v-for="tag in realTag" :key="tag.id" :name="tag.name" :bgColor="tag.color"></TagView>
+                        <TagView v-for="tag in realTag" 
+                        :key="tag.id" 
+                        :tagId="tag.id" 
+                        :name="tag.name" 
+                        :bgColor="tag.color"
+                        @tag-close="onTagClose"
+                        ></TagView>
                         <div class="one-icon-button-div" >
                             <button @click="addTagClicked" type="button" class="ccp-small-button" >
                                 <div>
@@ -45,10 +52,11 @@
                     </div>
                 </div>
                 <div id="ccp-submit-div">
-                    <button type="submit"  v-on:submit.prevent="onSubmitNewCard" >Submit</button>
+                    <button type="submit" v-on:submit.prevent="onSubmitNewCard" @click="onSubmitNewCard" >Save</button>
                     <button type="button" @click="onCancel" v-on:submit.prevent>Cancel</button>
                 </div>
-            </form>
+            </div>
+            <!-- </form> -->
         </div>
     <!-- </div> -->
 </template>
@@ -67,12 +75,6 @@ export default {
     },
     data : function () { return {
         cardName : '',
-        // tags : [
-        //     {'name' : 'TagTest', 'color' : '#dfe2a0'},
-        //     {'name' : 'TagTest 2', 'color' : '#dfe2a0'},
-        //     {'name' : 'TagTest 3', 'color' : '#dfe2a0'},
-        //     {'name' : 'TagTest 4', 'color' : '#dfe2a0'}
-        // ],
         tags : [],
         description : '',
         showSelectTag : false,
@@ -143,33 +145,36 @@ export default {
                 const createTagViewDomElement = createTagView.$el;
                 console.log(createTagViewDomElement)
 
-                // if (createTagViewDomElement && !createTagViewDomElement.contains(event.target)) {
-                //     this.showSelectTag = false;
-                //     console.log('CLICK ON AN ELEMENT OUTSIDE THE DIV')
-                //     document.removeEventListener('click', this.handleClickOutside);
-                // }
-                // else {
+
                     if (event.clientX < rectDiv.left || event.clientX > rectDiv.right ||
-                        event.clientY < rectDiv.top || event.clientY > rectDiv.bottom
-                    )
+                        event.clientY < rectDiv.top || event.clientY > rectDiv.bottom)
                     {
-                    this.showSelectTag = false;
-                    console.log('CLICK AT COORDINATE OUTSIDE THE DIV')
-                    document.removeEventListener('mousedown', this.handleClickOutside);
+                        this.showSelectTag = false;
+                        console.log('Click inside')
+                        document.removeEventListener('mousedown', this.handleClickOutside);
                     }
                     else {
-                        console.log('NO CLICK OUTSIDE AND NO CLICK ELEMENT THAT IS NOT INSIDE')
+                        console.log('Click outside')
                     }
-                // }
             }
         },
         onTagClicked : function(payload) {
             console.log(payload.tagId);
             this.tags.push(payload.tagId)
-        }
+        },
+        onTagClose : function(payload) {
+            console.log(payload);
+            console.log(this.tags.indexOf(42));
+            if (this.tags.indexOf(payload.tagId) != -1) {
+                this.tags.splice(this.tags.indexOf(payload.tagId), 1);
+            }
+        },
     },
     beforeDestroy() {
         document.removeEventListener('mousedown', this.handleClickOutside);
+    },
+    mounted() {
+        this.$refs.cardNameInputRef.focus();
     }
 }
 </script>
@@ -184,19 +189,7 @@ span.ccp-label-span {
 #create-card-main-div {
     position: absolute;
     background-color: white;
-
-    // left: 50%;
-    // top: 20%;
-    // transform: translate(-50%, 0);
-    
-    // Size must be on form view or else the flex to take all available space don't work ....
-    // width: 600px;
-    // height: 240px;
-
-    // border: 2px solid black;
-    // box-shadow: 6px 3px 12px black;
-    border-radius: 12px;
-    
+    border-radius: 12px; 
 
     box-sizing: border-box;
     padding: 9px;
@@ -216,7 +209,7 @@ span.ccp-label-span {
 }
 
 #ccp-name-div {
-    border: 1px solid red;
+    // border: 1px solid red;
     box-sizing: border-box;
     
     display: flex;
@@ -227,7 +220,7 @@ span.ccp-label-span {
 }
 
 #ccp-tags-div {
-    border: 1px solid green;
+    // border: 1px solid green;
     box-sizing: border-box;
     
     display: flex;
@@ -240,7 +233,7 @@ span.ccp-label-span {
 }
 
 #ccp-tags-content-div {
-    border: 1px solid red;
+    // border: 1px solid red;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -252,7 +245,7 @@ span.ccp-label-span {
 }
 
 #ccp-description-div {
-    border: 1px solid blue;
+    // border: 1px solid blue;
     box-sizing: border-box;
     
     display: flex;
@@ -264,7 +257,7 @@ span.ccp-label-span {
 }
 
 #ccp-description-ta-div {
-    border: 1px solid yellow;
+    // border: 1px solid yellow;
     box-sizing: border-box;
     
     width: 100%;
@@ -297,19 +290,13 @@ span.ccp-label-span {
     // flex: 0 1 auto;
 }
 
-// #ccp-background-div {
-//     position: absolute;
-//     top: 0px;
-//     left: 0px;
+#ccp-submit-div button{
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-left: 6px;
 
-//     overflow: hidden;
-
-//     width: 100%;
-//     height: 100%;
-
-//     background-color: rgba(0, 0, 0, 0.2);
-//     backdrop-filter: blur(2px);
-// }
+    width: 60px;
+}
 
 #ccp-nav-bar {
     // border: 1px solid purple;
@@ -350,10 +337,6 @@ input {
     outline: none;
     // width: auto;
 }
-
-// .ccp-small-icon {
-//     font-size: 21px;
-// }
 
 
 </style>

@@ -21,19 +21,12 @@
             <button @click="onDisplayTable"><span v-if="!isTableVisible">DISPLAY</span><span v-if="isTableVisible">HIDE</span></button>
             <BoardView v-if="isTableVisible" @new-card-event="onNewCardEventHandler"></BoardView>
         </div>
-        <!-- <div>
-            <CardView></CardView>
-        </div> -->
-        <!-- <div>
-            <CardViewT></CardViewT>
-        </div> -->
      </div>
 
   </div>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
 import BoardView from './components/BoardView.vue'
 // import CardView from './components/CardView.vue'
 // import CardViewT from './components/test/CardViewTest.vue'
@@ -84,33 +77,15 @@ export default {
             console.log (data)
             console.log (data.tags)
 
-                // let boardId = data.boardId;
-                // let newCardName = data.name;
-                // let cardDescription = data.description;
-                // let cardTags = data.tags;
+            this.cardCreationMode.isActive = false;
 
-                // let board = this.getBoardById(boardId);
-
-                // console.log(board);
-
-                // if (board) {
-                //     board.cards.push({
-                //         'id' : ++this.lastCardId,
-                //             'title' : newCardName,
-                //             'smallDescription' : cardDescription,
-                //             'tags' : cardTags
-                //     })
-                // }
-
-                this.cardCreationMode.isActive = false;
-
-                this.$store.dispatch('createCardOnBoard', {
-                    'boardId' : data.boardId,
-                    'title' : data.name,
-                    'smallDescription' : data.description,
-                    'tags' : data.tags
-                })
-            },
+            this.$store.dispatch('createCardOnBoard', {
+                'boardId' : data.boardId,
+                'title' : data.name,
+                'description' : data.description,
+                'tags' : data.tags
+            })
+        },
   }
 }
 </script>
@@ -148,8 +123,6 @@ export default {
 .one-icon-button-div {
     display: flex;
     // border: 1px solid red;
-    // border: 1px solid black;
-
     right: 0px;
     top: 0px;
 }
@@ -177,18 +150,7 @@ export default {
 
 //.one-icon-button-div button 
 .one-icon-button-border-div {
-    // display: flex;
-
-    // /* align-items: flex-start; */
-    // /* justify-content: right; */
-    // align-self: flex-start;
-    // box-sizing: border-box;
-
-    // border: 1px solid green;
-
-
-
-    background-color: #f5fafe;
+    background-color: #e2f2ff;
     border: 2px solid rgb(175, 190, 200);
     border-radius: 6px;
 
@@ -355,12 +317,6 @@ div.board-plus-empty {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    // justify-content: center;
-    // align-items: center;  
-
-    // align-self: center;
-
     /* height: 9px; */
 
     box-sizing: border-box;
